@@ -2,15 +2,10 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
+import { useCallStore } from "./useCallStore";
 
-// const BASE_URL =
-//   import.meta.env.MODE === "development"
-//     ? import.meta.env.VITE_SOCKET_URL
-//     : "/";
-
+// 🔧 URL socket (Render/localhost)
 const BASE_URL = import.meta.env.VITE_SOCKET_URL;
-
-
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -21,10 +16,10 @@ export const useAuthStore = create((set, get) => ({
   onlineUsers: [],
   socket: null,
 
+  // ✅ Kiểm tra đăng nhập
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
@@ -35,6 +30,7 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  // ✅ Đăng ký
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
@@ -43,27 +39,28 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Signup failed");
     } finally {
       set({ isSigningUp: false });
     }
   },
 
+  // ✅ Đăng nhập
   login: async (data) => {
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
       toast.success("Logged in successfully");
-
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
       set({ isLoggingIn: false });
     }
   },
 
+  // ✅ Đăng xuất
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
@@ -71,7 +68,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Logged out successfully");
       get().disconnectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Logout failed");
     }
   },
 
@@ -82,8 +79,7 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       toast.success("Profile updated successfully");
     } catch (error) {
-      console.log("error in update profile:", error);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Update failed");
     } finally {
       set({ isUpdatingProfile: false });
     }
@@ -94,19 +90,53 @@ export const useAuthStore = create((set, get) => ({
     if (!authUser || get().socket?.connected) return;
 
     const socket = io(BASE_URL, {
-      query: {
-        userId: authUser._id,
-      },
+      query: { userId: authUser._id },
     });
     socket.connect();
-
-    set({ socket: socket });
+    set({ socket });
 
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });
+
+    const { incomingCall, handleAccepted, endCall } = useCallStore.getState();
+
+    socket.on("callToUser", (data) => {
+      console.log("📞 Incoming call:", data);
+      const { from, signal, meta } = data;
+      incomingCall({
+        from,
+        offer: signal,
+        meta,
+      });
+    });
+
+    socket.on("callAccepted", (data) => {
+      console.log("✅ Call accepted:", data);
+      handleAccepted(data.signal, data.from);
+    });
+
+    socket.on("call:rejected", () => {
+      console.log("❌ Call rejected");
+      toast.error("Người nhận từ chối cuộc gọi");
+      endCall(false);
+    });
+
+    socket.on("call:ended", () => {
+      console.log("📴 Cuộc gọi đã kết thúc");
+      endCall(false);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("⚠️ Socket disconnected");
+    });
   },
+
   disconnectSocket: () => {
-    if (get().socket?.connected) get().socket.disconnect();
+    const socket = get().socket;
+    if (socket?.connected) {
+      socket.disconnect();
+      console.log("🔌 Socket disconnected manually");
+    }
   },
 }));
