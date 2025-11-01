@@ -5,7 +5,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
-import NoChatSelected from "./NoChatSelected";
+// import NoChatSelected from "./NoChatSelected";
 import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
@@ -39,7 +39,7 @@ const ChatContainer = () => {
   if (!selectedUser) {
     return (
       <div className="hidden md:flex flex-1 bg-base-100 items-center justify-center">
-        <NoChatSelected />
+        {/* <NoChatSelected /> */}
       </div>
     );
   }
