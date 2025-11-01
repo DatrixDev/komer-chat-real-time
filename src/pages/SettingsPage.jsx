@@ -21,7 +21,6 @@ const SettingsPage = () => {
           </p>
         </div>
 
-        {/* --- Lựa chọn chủ đề --- */}
         <div className="space-y-5">
           <h2 className="text-lg font-semibold">Chủ đề</h2>
           <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-3">
@@ -51,7 +50,6 @@ const SettingsPage = () => {
           </div>
         </div>
 
-        {/* --- Xem trước giao diện --- */}
         <div className="mt-10">
           <h3 className="text-lg font-semibold mb-4">Xem trước</h3>
           <div className="rounded-2xl border border-base-300 overflow-hidden bg-base-100 shadow-md">
@@ -71,7 +69,6 @@ const SettingsPage = () => {
                     </div>
                   </div>
 
-                  {/* Tin nhắn demo */}
                   <div className="p-4 space-y-4 min-h-[200px] max-h-[200px] overflow-y-auto bg-base-100">
                     {PREVIEW_MESSAGES.map((message) => (
                       <div
@@ -100,7 +97,6 @@ const SettingsPage = () => {
                     ))}
                   </div>
 
-                  {/* Ô nhập chat giả lập */}
                   <div className="p-4 border-t border-base-300 bg-base-100">
                     <div className="flex gap-2">
                       <input

@@ -23,13 +23,11 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-base-200 flex justify-center px-4">
       <div className="w-full max-w-lg bg-base-100 rounded-2xl shadow-lg p-6 sm:p-8">
-        {/* Tiêu đề */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-zinc-800">Hồ sơ cá nhân</h1>
           <p className="text-zinc-500 mt-1">Thông tin tài khoản của bạn</p>
         </div>
 
-        {/* Ảnh đại diện */}
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="relative">
             <img
@@ -61,7 +59,6 @@ const ProfilePage = () => {
           </p>
         </div>
 
-        {/* Thông tin người dùng */}
         <div className="space-y-6">
           <div>
             <label className="text-sm text-zinc-500 flex items-center gap-2 mb-1">

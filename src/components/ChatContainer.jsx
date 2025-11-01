@@ -20,10 +20,7 @@ const ChatContainer = () => {
 
   const { authUser } = useAuthStore();
 
-  // Sentinel ref ở CUỐI list để cuộn xuống
   const endRef = useRef(null);
-
-  // Load message + subscribe theo user được chọn
   useEffect(() => {
     if (!selectedUser?._id) return;
 
@@ -34,15 +31,11 @@ const ChatContainer = () => {
       unsubscribeFromMessages();
     };
   }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
-
-  // Auto scroll xuống cuối khi danh sách messages thay đổi
   useEffect(() => {
     if (endRef.current) {
       endRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
-  // Chưa chọn người để chat
   if (!selectedUser) {
     return (
       <div className="hidden md:flex flex-1 bg-base-100 items-center justify-center">
@@ -50,8 +43,6 @@ const ChatContainer = () => {
       </div>
     );
   }
-
-  // Đang tải tin nhắn
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">

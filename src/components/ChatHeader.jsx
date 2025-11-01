@@ -17,8 +17,6 @@ const ChatHeader = () => {
           >
             <ArrowLeft size={20} />
           </button>
-
-          {/* Avatar */}
           <div className="avatar">
             <div className="size-10 rounded-full relative">
               <img
@@ -27,8 +25,6 @@ const ChatHeader = () => {
               />
             </div>
           </div>
-
-          {/* User info */}
           <div>
             <h3 className="font-medium">{selectedUser.fullName}</h3>
             <p className="text-sm text-base-content/70">

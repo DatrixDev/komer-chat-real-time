@@ -111,7 +111,6 @@ const Sidebar = () => {
                   setMenuOpenUserId(null);
                 }}
               >
-                {/* Avatar + info */}
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <img
@@ -131,7 +130,6 @@ const Sidebar = () => {
                   </div>
                 </div>
 
-                {/* Nút ⋯ + dropdown */}
                 <div className="relative">
                   <button
                     onClick={(e) => handleMenuClick(e, user._id)}

@@ -68,7 +68,6 @@ const VideoCallOverlay = () => {
     }
   };
 
-  // ⚡ Luôn tách useEffect ra ngoài if
   useEffect(() => {
     if (ringing) ringtone.play();
     else ringtone.stop();
@@ -117,7 +116,6 @@ const VideoCallOverlay = () => {
     );
   }
 
-  // --- Màn hình khi đang trong cuộc gọi ---
   return (
     <div className="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
       {/* Remote Video */}
@@ -130,7 +128,6 @@ const VideoCallOverlay = () => {
         }`}
       />
 
-      {/* Local Video Preview nhỏ (góc phải) */}
       <div
         className={`absolute bottom-28 right-5 bg-gray-900/80 rounded-xl overflow-hidden shadow-lg border-2 border-white ${
           !isCamOn ? "hidden" : ""
@@ -145,7 +142,6 @@ const VideoCallOverlay = () => {
         />
       </div>
 
-      {/* Khi đang chờ kết nối */}
       {!remoteStream && inCall && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center pointer-events-none">
           <div className="relative flex flex-col items-center mb-6">
@@ -166,7 +162,6 @@ const VideoCallOverlay = () => {
         </div>
       )}
 
-      {/* Call Controls */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-5">
         <button
           onClick={() => endCall(true)}

@@ -7,7 +7,6 @@ import { Search, MessageCircle, Home, Circle } from "lucide-react";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Link } from "react-router-dom";
 
-// Định nghĩa kiểu cho user (có thể mở rộng khi backend thêm trường)
 interface User {
   _id: string;
   fullName: string;
@@ -22,13 +21,9 @@ const Messages = () => {
   const { users, getUsers, selectedUser, setSelectedUser, isUsersLoading } =
     useChatStore();
   const { onlineUsers, authUser } = useAuthStore();
-
-  // Lấy danh sách user khi sidebarMode = "chat"
   useEffect(() => {
     if (sidebarMode === "chat") getUsers();
   }, [sidebarMode, getUsers]);
-
-  // Format giờ hiển thị
   const formatTime = (isoString: string | undefined) => {
     if (!isoString) return "";
     const date = new Date(isoString);
@@ -37,16 +32,11 @@ const Messages = () => {
       minute: "2-digit",
     });
   };
-
-  // Nếu không phải mode chat thì ẩn
   if (sidebarMode !== "chat") return null;
-
-  // Loading skeleton
   if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
-      {/* Header */}
       <div className="border-b border-base-300 w-full p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -64,7 +54,6 @@ const Messages = () => {
           </Link>
         </div>
 
-        {/* Ô tìm kiếm */}
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
@@ -75,13 +64,11 @@ const Messages = () => {
         </div>
       </div>
 
-      {/* Danh sách hội thoại */}
       <div className="flex-1 overflow-y-auto p-3">
         {users.length === 0 ? (
           <p className="text-center text-zinc-400">Không có người dùng nào</p>
         ) : (
           users
-            // Lọc bỏ chính mình
             .filter((user: User) => user._id !== authUser?._id)
             .map((user: User) => (
               <motion.div
@@ -95,7 +82,6 @@ const Messages = () => {
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  {/* Avatar + trạng thái online */}
                   <div className="relative">
                     <img
                       src={user.profilePic || "/avatar.png"}
@@ -107,7 +93,6 @@ const Messages = () => {
                     )}
                   </div>
 
-                  {/* Tên + tin nhắn gần nhất */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold text-sm truncate">
