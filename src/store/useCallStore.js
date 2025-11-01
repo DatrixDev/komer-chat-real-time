@@ -11,8 +11,8 @@ const ringtone = new Howl({
 export const useCallStore = create((set, get) => ({
   inCall: false,
   ringing: false,
-  callerId: null, 
-  calleeId: null, 
+  callerId: null,
+  calleeId: null,
   peer: null,
   localStream: null,
   remoteStream: null,
@@ -149,7 +149,7 @@ export const useCallStore = create((set, get) => ({
       _pendingOffer: null,
     });
   },
-  endCall: (shouldEmit = true) => {
+  endCall: (shouldEmit = true, silent = false) => {
     const socket = useAuthStore.getState().socket;
     const { peer, localStream, callerId, calleeId } = get();
     const otherUser = callerId || calleeId;
@@ -175,7 +175,7 @@ export const useCallStore = create((set, get) => ({
       _pendingOffer: null,
     });
 
-    toast("Cuộc gọi đã kết thúc");
+    if (!silent) toast("Cuộc gọi đã kết thúc");
   },
 
   handleAccepted: (answerSignal, from) => {
@@ -196,7 +196,6 @@ export const useCallStore = create((set, get) => ({
       return;
     }
     set({ ringing: true, callerId: from, meta, _pendingOffer: offer });
-    toast(`Cuộc gọi đến từ ${meta?.name || "ai đó"}`);
   },
 
   getPendingOffer: () => get()._pendingOffer,

@@ -119,7 +119,7 @@ export const useAuthStore = create((set, get) => ({
     socket.on("call:rejected", () => {
       console.log("❌ Call rejected");
       toast.error("Người nhận từ chối cuộc gọi");
-      endCall(false);
+     endCall(false, true);
     });
 
     socket.on("call:ended", () => {

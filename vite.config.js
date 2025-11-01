@@ -1,17 +1,20 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   plugins: [
     react(),
-    nodePolyfills({ protocolImports: true }), 
+    nodePolyfills({ protocolImports: true }),
   ],
   define: {
-    global: 'window',
-    'process.env': {},       
+    global: "window",
+    "process.env": {},
   },
   optimizeDeps: {
-    include: ['buffer', 'process'],
+    include: ["buffer", "process"],
+  },
+  server: {
+    historyApiFallback: true, 
   },
 });
