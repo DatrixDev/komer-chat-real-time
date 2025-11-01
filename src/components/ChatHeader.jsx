@@ -1,7 +1,7 @@
 import { X, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
-import CallButtons from "./CallButtons";
+import VideoCallButton from "./VideoCallButton";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -40,7 +40,7 @@ const ChatHeader = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <CallButtons  receiver={selectedUser} />
+          <VideoCallButton  receiver={selectedUser} />
           <button
             onClick={() => setSelectedUser(null)}
             className="hidden md:block p-2 rounded-full hover:bg-base-200 transition"

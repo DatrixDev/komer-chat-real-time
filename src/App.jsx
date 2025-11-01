@@ -1,4 +1,5 @@
 import Navbar from "./components/Navbar";
+
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
@@ -13,21 +14,17 @@ import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
-// ✅ import thêm dòng này
-import { useCallStore } from "./store/useCallStore";
-
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
+
+  console.log({ onlineUsers });
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  // ✅ Thêm đoạn này để kích hoạt lắng nghe sự kiện “yêu cầu bật video”
-  useEffect(() => {
-    useCallStore.getState().handleVideoRequest();
-  }, []);
+  console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
     return (
@@ -59,12 +56,9 @@ const App = () => {
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
       </Routes>
-
       <VideoCallOverlay />
-
       <Toaster />
     </div>
   );
 };
-
 export default App;
