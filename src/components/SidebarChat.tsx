@@ -6,7 +6,7 @@ import { useSidebarStore } from "../store/useSidebarStore";
 import { Search, MessageCircle, Home, Circle } from "lucide-react";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Link } from "react-router-dom";
- 
+
 // Cập nhật interface này để code "biết" về các trường dữ liệu mới
 // (ngay cả khi chúng chưa có)
 interface User {
@@ -87,10 +87,13 @@ const Messages = () => {
               <motion.div
                 key={user._id}
                 whileHover={{ scale: 1.02 }}
-                onClick={() => setSelectedUser(user)}
+                onClick={() => {
+                  setSelectedUser(user);
+                  useChatStore.getState().markMessagesAsRead(user._id);
+                }}
                 className={`p-3 rounded-lg cursor-pointer transition-all mb-2 ${
                   selectedUser?._id === user._id
-                    ? "bg-gray-700" 
+                    ? "bg-gray-700"
                     : "hover:bg-gray-800"
                 }`}
               >
@@ -106,14 +109,15 @@ const Messages = () => {
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm truncate text-white mb-1">
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <h3 className="font-semibold text-sm text-white mb-1 truncate block">
                       {user.fullName}
                     </h3>
-                    <p className="text-xs text-gray-400 truncate">
+                    <p className="text-xs text-gray-400 truncate block">
                       {user.lastMessage || "Bắt đầu trò chuyện"}
                     </p>
                   </div>
+
                   <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-auto">
                     <span className="text-xs text-gray-500">
                       {user.lastMessageTime

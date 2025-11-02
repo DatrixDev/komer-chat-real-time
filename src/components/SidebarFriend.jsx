@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, UserPlus } from "lucide-react";
+import { Users, UserPlus, Search } from "lucide-react"; // Import Search
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useFriendStore } from "../store/useFriendStore";
@@ -104,14 +104,16 @@ const Sidebar = () => {
                 key={user._id}
                 className={`group w-full p-3 flex items-center justify-between hover:bg-base-300 transition-colors rounded-lg
       ${
-        selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""
+        selectedUser?._id === user._id
+          ? "bg-base-300 ring-1 ring-base-300"
+          : ""
       }`}
                 onClick={() => {
                   setSelectedUser(user);
                   setMenuOpenUserId(null);
                 }}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="relative">
                     <img
                       src={user.profilePic || "/avatar.png"}
@@ -122,7 +124,8 @@ const Sidebar = () => {
                       <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
                     )}
                   </div>
-                  <div className="text-left min-w-0">
+                  {/* SỬA ĐỔI: Ẩn text khi ở md (w-20) */}
+                  <div className="text-left min-w-0 inline md:hidden lg:inline">
                     <div className="font-medium truncate">{user.fullName}</div>
                     <div className="text-sm text-zinc-400">
                       {onlineUsers.includes(user._id) ? "Online" : "Offline"}
@@ -130,7 +133,7 @@ const Sidebar = () => {
                   </div>
                 </div>
 
-                <div className="relative">
+                <div className="relative inline md:hidden lg:inline">
                   <button
                     onClick={(e) => handleMenuClick(e, user._id)}
                     className="btn btn-ghost btn-xs px-2"
@@ -141,12 +144,12 @@ const Sidebar = () => {
                   {menuOpenUserId === user._id && dropdownPos.top !== 0 && (
                     <div
                       className={`fixed z-[9999] bg-base-100 border border-base-300 rounded-lg 
-                          shadow-[0_4px_12px_rgba(0,0,0,0.1)] w-32 transition-all duration-200 
-                          ease-out transform origin-top ${
-                            menuOpenUserId === user._id
-                              ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                              : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
-                          }`}
+                            shadow-[0_4px_12px_rgba(0,0,0,0.1)] w-32 transition-all duration-200 
+                            ease-out transform origin-top ${
+                              menuOpenUserId === user._id
+                                ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                                : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+                            }`}
                       style={{
                         top: dropdownPos.top,
                         left: dropdownPos.left,
@@ -159,7 +162,7 @@ const Sidebar = () => {
                           setMenuOpenUserId(null);
                         }}
                         className="flex items-center gap-2 w-full text-left px-3 py-2 
-                                     text-sm text-red-500 hover:bg-base-200 transition-colors"
+                                  text-sm text-red-500 hover:bg-base-200 transition-colors"
                       >
                         ❌ Xóa bạn
                       </button>
@@ -173,7 +176,8 @@ const Sidebar = () => {
 
       case "requests":
         return (
-          <>
+          // SỬA ĐỔI: Ẩn toàn bộ nội dung tab này khi ở md (w-20)
+          <div className="inline md:hidden lg:inline">
             <h3 className="font-semibold mb-2">Lời mời đến</h3>
             {requests.received.length === 0 ? (
               <div className="text-center text-zinc-500 py-4">
@@ -226,12 +230,13 @@ const Sidebar = () => {
                 </div>
               ))
             )}
-          </>
+          </div>
         );
 
       case "all":
         return (
-          <>
+          // SỬA ĐỔI: Ẩn toàn bộ nội dung tab này khi ở md (w-20)
+          <div className="inline md:hidden lg:inline">
             <h3 className="font-semibold mb-2">Tất cả người dùng</h3>
             {allUsers
               .filter((user) => {
@@ -292,7 +297,7 @@ const Sidebar = () => {
                   </div>
                 );
               })}
-          </>
+          </div>
         );
     }
   };
@@ -300,23 +305,29 @@ const Sidebar = () => {
   return (
     <>
       {sidebarMode === "friend" && (
-        <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
+        // SỬA ĐỔI CHÍNH: Xóa w-20, lg:w-72, border-r, và transition
+        // Thêm w-full để nó nhận chiều rộng từ component cha (HomePage)
+        <aside className="h-full w-full flex flex-col">
           {/* Header */}
           <div className="border-b border-base-300 w-full p-4 flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <Users className="size-6" />
-              <span className="font-semibold text-lg">Liên hệ</span>
+              {/* SỬA ĐỔI: Ẩn text khi ở md (w-20) */}
+              <span className="font-semibold text-lg inline md:hidden lg:inline">
+                Liên hệ
+              </span>
             </div>
 
             {/* Tabs */}
             <div className="flex items-center gap-2 justify-between">
+              {/* SỬA ĐỔI: Ẩn text khi ở md (w-20) */}
               <button
                 className={`btn btn-xs flex-1 ${
                   activeTab === "all" ? "btn-primary" : "btn-ghost"
                 }`}
                 onClick={() => setActiveTab("all")}
               >
-                Mọi người
+                <span className="inline md:hidden lg:inline">Mọi người</span>
               </button>
               <button
                 className={`btn btn-xs flex-1 ${
@@ -324,7 +335,7 @@ const Sidebar = () => {
                 }`}
                 onClick={() => setActiveTab("requests")}
               >
-                Lời mời
+                <span className="inline md:hidden lg:inline">Lời mời</span>
               </button>
               <button
                 className={`btn btn-xs flex-1 ${
@@ -332,32 +343,21 @@ const Sidebar = () => {
                 }`}
                 onClick={() => setActiveTab("friends")}
               >
-                Bạn bè
+                <span className="inline md:hidden lg:inline">Bạn bè</span>
               </button>
             </div>
 
+            {/* SỬA ĐỔI: Ẩn search khi ở md (w-20) */}
             {activeTab === "all" && (
-              <div className="relative mt-2">
+              <div className="relative mt-2 inline md:hidden lg:inline">
                 <input
                   type="text"
                   placeholder="Tìm kiếm người dùng..."
                   className="input input-sm input-bordered w-full pl-8"
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 absolute left-2.5 top-2.5 text-zinc-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"
-                  />
-                </svg>
+                {/* Thay thế SVG bằng Lucide Icon cho nhất quán */}
+                <Search className="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
               </div>
             )}
           </div>

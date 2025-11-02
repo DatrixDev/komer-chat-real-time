@@ -5,7 +5,6 @@ import { useAuthStore } from "../store/useAuthStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
-// import NoChatSelected from "./NoChatSelected";
 import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
@@ -30,10 +29,15 @@ const ChatContainer = () => {
     return () => {
       unsubscribeFromMessages();
     };
-  }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [
+    selectedUser?._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
   useEffect(() => {
     if (endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth" });
+      endRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, [messages]);
   if (!selectedUser) {
@@ -60,10 +64,9 @@ const ChatContainer = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => {
           const isMine = message.senderId === authUser._id;
-          const avatar =
-            isMine
-              ? authUser.profilePic || "/avatar.png"
-              : selectedUser.profilePic || "/avatar.png";
+          const avatar = isMine
+            ? authUser.profilePic || "/avatar.png"
+            : selectedUser.profilePic || "/avatar.png";
 
           return (
             <div
