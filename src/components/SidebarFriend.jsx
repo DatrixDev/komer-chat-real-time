@@ -105,11 +105,8 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/messages/users", {
-          credentials: "include",
-        });
-        const data = await res.json();
-        setAllUsers(data);
+        const res = await axiosInstance.get("/messages/users");
+        setAllUsers(res.data);
       } catch (err) {
         console.log("Lỗi tải danh sách user:", err);
       }
@@ -158,7 +155,6 @@ const Sidebar = () => {
                       <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
                     )}
                   </div>
-                  {/* SỬA ĐỔI: Ẩn text khi ở md (w-20) */}
                   <div className="text-left min-w-0 inline md:hidden lg:inline">
                     <div className="font-medium truncate">{user.fullName}</div>
                     <div className="text-sm text-zinc-400">
@@ -210,7 +206,6 @@ const Sidebar = () => {
 
       case "requests":
         return (
-          // SỬA ĐỔI: Ẩn toàn bộ nội dung tab này khi ở md (w-20)
           <div className="inline md:hidden lg:inline">
             <h3 className="font-semibold mb-2">Lời mời đến</h3>
             {requests.received.length === 0 ? (
@@ -341,22 +336,16 @@ const Sidebar = () => {
   return (
     <>
       {sidebarMode === "friend" && (
-        // SỬA ĐỔI CHÍNH: Xóa w-20, lg:w-72, border-r, và transition
-        // Thêm w-full để nó nhận chiều rộng từ component cha (HomePage)
         <aside className="h-full w-full flex flex-col">
-          {/* Header */}
           <div className="border-b border-base-300 w-full p-4 flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <Users className="size-6" />
-              {/* SỬA ĐỔI: Ẩn text khi ở md (w-20) */}
               <span className="font-semibold text-lg inline md:hidden lg:inline">
                 Liên hệ
               </span>
             </div>
 
-            {/* Tabs */}
             <div className="flex items-center gap-2 justify-between">
-              {/* SỬA ĐỔI: Ẩn text khi ở md (w-20) */}
               <button
                 className={`btn btn-xs flex-1 ${
                   activeTab === "all" ? "btn-primary" : "btn-ghost"
