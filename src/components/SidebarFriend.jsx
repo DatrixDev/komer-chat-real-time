@@ -5,6 +5,8 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useFriendStore } from "../store/useFriendStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { useSidebarStore } from "../store/useSidebarStore";
+import { axiosInstance } from "../lib/axios";
+
 
 const Sidebar = () => {
   const { sidebarMode } = useSidebarStore();
