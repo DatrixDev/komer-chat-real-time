@@ -47,6 +47,42 @@ const Sidebar = () => {
     };
   }, [socket, fetchFriends, fetchRequests]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("friendRequestReceived", fetchRequests);
+    socket.on("friendRequestAccepted", () => {
+      fetchFriends();
+      fetchRequests();
+    });
+
+    socket.on("friendRequestCanceled", fetchRequests);
+    socket.on("friendRemoved", () => {
+      fetchFriends();
+      fetchRequests();
+    });
+
+    return () => {
+      socket.off("friendRequestReceived");
+      socket.off("friendRequestAccepted");
+      socket.off("friendRequestCanceled");
+      socket.off("friendRemoved");
+    };
+  }, [socket, fetchFriends, fetchRequests]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("userJoined", (newUser) => {
+      setAllUsers((prev) => {
+        if (prev.some((u) => u._id === newUser._id)) return prev;
+        return [...prev, newUser];
+      });
+    });
+
+    return () => socket.off("userJoined");
+  }, [socket]);
+
   const handleMenuClick = (e, userId) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
@@ -104,9 +140,7 @@ const Sidebar = () => {
                 key={user._id}
                 className={`group w-full p-3 flex items-center justify-between hover:bg-base-300 transition-colors rounded-lg
       ${
-        selectedUser?._id === user._id
-          ? "bg-base-300 ring-1 ring-base-300"
-          : ""
+        selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""
       }`}
                 onClick={() => {
                   setSelectedUser(user);
@@ -285,7 +319,9 @@ const Sidebar = () => {
                         Hủy gửi
                       </button>
                     ) : isReceived ? (
-                      <span className="text-xs text-zinc-500">Đã gửi bạn</span>
+                      <span className="text-xs text-zinc-500">
+                        Hãy chấp nhận
+                      </span>
                     ) : (
                       <button
                         onClick={() => sendRequest(user._id)}

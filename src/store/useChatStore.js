@@ -9,17 +9,16 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  _subscribed: false, 
 
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
-      const res = await axiosInstance.get("/messages/users");
+      const res = await axiosInstance.get("/friends");
       set({ users: res.data });
       return res.data;
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Lỗi tải danh sách người dùng"
-      );
+      toast.error(error.response?.data?.message || "Lỗi tải danh sách người dùng");
       return [];
     } finally {
       set({ isUsersLoading: false });
@@ -41,13 +40,10 @@ export const useChatStore = create((set, get) => ({
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
-      const res = await axiosInstance.post(
-        `/messages/send/${selectedUser._id}`,
-        messageData
-      );
-
+      const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
       const newMsg = res.data;
       set({ messages: [...messages, newMsg] });
+
       set((state) => ({
         users: state.users.map((u) =>
           u._id === state.selectedUser._id
@@ -71,9 +67,7 @@ export const useChatStore = create((set, get) => ({
   markMessagesAsRead: (userId) => {
     const socket = useAuthStore.getState().socket;
     if (!socket) return;
-
     socket.emit("markAsRead", userId);
-
     set((state) => ({
       users: state.users.map((u) =>
         u._id === userId ? { ...u, unreadCount: 0 } : u
@@ -83,12 +77,14 @@ export const useChatStore = create((set, get) => ({
 
   subscribeToMessages: () => {
     const socket = useAuthStore.getState().socket;
-    if (!socket) return;
+    if (!socket || get()._subscribed) return;
+
+    set({ _subscribed: true });
+    console.log("✅ Subscribed socket only once");
 
     socket.on("newMessage", (newMessage) => {
       const { selectedUser } = get();
 
-      // 🔹 Nếu đang chat với người này → thêm vào đoạn chat
       if (
         selectedUser &&
         (newMessage.senderId === selectedUser._id ||
@@ -141,8 +137,11 @@ export const useChatStore = create((set, get) => ({
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
+    if (!socket) return;
     socket.off("newMessage");
     socket.off("messagesRead");
+    set({ _subscribed: false });
+    console.log("❌ Socket unsubscribed");
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),

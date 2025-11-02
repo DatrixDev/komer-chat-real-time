@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
@@ -16,37 +15,33 @@ const ChatContainer = () => {
     subscribeToMessages,
     unsubscribeFromMessages,
   } = useChatStore();
-
   const { authUser } = useAuthStore();
 
-  const endRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // 🔹 Lấy tin nhắn khi chọn user mới
   useEffect(() => {
     if (!selectedUser?._id) return;
-
     getMessages(selectedUser._id);
     subscribeToMessages();
 
-    return () => {
-      unsubscribeFromMessages();
-    };
-  }, [
-    selectedUser?._id,
-    getMessages,
-    subscribeToMessages,
-    unsubscribeFromMessages,
-  ]);
+    return () => unsubscribeFromMessages();
+  }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+
+  // 🔹 Không dùng scrollIntoView nữa — để flex-col-reverse lo
   useEffect(() => {
-    if (endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "auto" });
-    }
-  }, [messages]);
+    if (!containerRef.current) return;
+    containerRef.current.scrollTop = 0; // reset nhẹ khi đổi user
+  }, [selectedUser?._id]);
+
   if (!selectedUser) {
     return (
       <div className="hidden md:flex flex-1 bg-base-100 items-center justify-center">
-        {/* <NoChatSelected /> */}
+        <p className="text-gray-400">Chọn một người để bắt đầu trò chuyện</p>
       </div>
     );
   }
+
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
@@ -58,11 +53,14 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div className="flex-1 flex flex-col overflow-hidden">
       <ChatHeader />
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => {
+      {/* ✅ Render từ dưới lên, tin nhắn mới nhất nằm ngay dưới mà không cần cuộn */}
+      <div
+        ref={containerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col-reverse scroll-smooth"
+      >
+        {messages.slice().reverse().map((message) => {
           const isMine = message.senderId === authUser._id;
           const avatar = isMine
             ? authUser.profilePic || "/avatar.png"
@@ -98,8 +96,6 @@ const ChatContainer = () => {
             </div>
           );
         })}
-
-        <div ref={endRef} />
       </div>
 
       <MessageInput />
