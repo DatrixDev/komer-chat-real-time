@@ -16,21 +16,21 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
   } = useChatStore();
   const { authUser } = useAuthStore();
-  const containerRef = useRef(null);
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     subscribeToMessages();
     return () => unsubscribeFromMessages();
   }, [subscribeToMessages, unsubscribeFromMessages]);
-
   useEffect(() => {
     if (!selectedUser?._id) return;
     getMessages(selectedUser._id);
-  }, [selectedUser?._id, getMessages]);
-
-  useEffect(() => {
     if (containerRef.current) containerRef.current.scrollTop = 0;
-  }, [selectedUser?._id]);
+  }, [selectedUser?._id, getMessages]);
+  useEffect(() => {
+    if (!containerRef.current) return;
+    containerRef.current.scrollTop = 0;
+  }, [messages.length]);
 
   if (!selectedUser) {
     return (
@@ -53,49 +53,44 @@ const ChatContainer = () => {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <ChatHeader />
+
       <div
         ref={containerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col-reverse scroll-smooth"
       >
-        {messages
-          .slice()
-          .reverse()
-          .map((message) => {
-            const isMine = message.senderId === authUser._id;
-            const avatar = isMine
-              ? authUser.profilePic || "/avatar.png"
-              : selectedUser.profilePic || "/avatar.png";
+        {messages.map((message) => {
+          const isMine = message.senderId === authUser._id;
+          const avatar = isMine
+            ? authUser.profilePic || "/avatar.png"
+            : selectedUser.profilePic || "/avatar.png";
 
-            return (
-              <div
-                key={message._id}
-                className={`chat ${isMine ? "chat-end" : "chat-start"}`}
-              >
-                <div className="chat-image avatar">
-                  <div className="size-10 rounded-full border">
-                    <img src={avatar} alt="profile" />
-                  </div>
-                </div>
-
-                <div className="chat-header mb-1">
-                  <time className="text-xs opacity-50 ml-1">
-                    {formatMessageTime(message.createdAt)}
-                  </time>
-                </div>
-
-                <div className="chat-bubble flex flex-col">
-                  {message.image && (
-                    <img
-                      src={message.image}
-                      alt="Attachment"
-                      className="sm:max-w-[200px] rounded-md mb-2"
-                    />
-                  )}
-                  {message.text && <p>{message.text}</p>}
+          return (
+            <div key={message._id} className={`chat ${isMine ? "chat-end" : "chat-start"}`}>
+              <div className="chat-image avatar">
+                <div className="size-10 rounded-full border">
+                  <img src={avatar} alt="profile" />
                 </div>
               </div>
-            );
-          })}
+
+              <div className="chat-header mb-1">
+                <time className="text-xs opacity-50 ml-1">
+                  {formatMessageTime(message.createdAt)}
+                </time>
+              </div>
+
+              <div className="chat-bubble flex flex-col">
+                {message.image && (
+                  <img
+                    src={message.image}
+                    alt="Attachment"
+                    className="sm:max-w-[200px] rounded-md mb-2"
+                  />
+                )}
+                {message.text && <p>{message.text}</p>}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <MessageInput />
